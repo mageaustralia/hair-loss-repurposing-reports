@@ -12,6 +12,12 @@ topicals. Two completed runs are published here:
   correction (ferritin/vitamin D), topical adenosine, a sequential
   androgen-axis program, TSH-gated levothyroxine, gated tofacitinib
   (areata-incognita rule-out).
+- **[Premature grey hair (canities)](grey-hair-premature-canities/report.md)**
+  — 6 rounds, 83 hypotheses, candidate universe extended beyond drugs to
+  cosmetic actives (Greyverse, Melitane, etc.) and procedures/devices
+  (microneedling, LLLT, phototherapy, PRP). Top picks: pre-registered
+  vehicle-controlled trials of MC1R-agonist cosmetic peptides with ex vivo
+  gating experiments.
 
 Each folder has the full report as Markdown (`report.md`) and a
 self-contained annotated HTML version (`report.html` — download and open in
