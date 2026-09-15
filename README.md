@@ -32,3 +32,36 @@ ClinicalTrials.gov (prior trials), OpenTargets (target–disease association),
 and PubMed co-mention novelty before final ranking. A Harvard TxGNN
 knowledge-graph model was run as an independent check on the AGA run (no
 concordance signal; documented in that report's appendix).
+
+## How this was run
+
+The pipeline (`hairloop`, Python) never calls an LLM itself — it does the
+deterministic work (data fetching, state, Elo math, validation, report
+assembly) while an AI coding agent (Kimi Code) orchestrates and acts as the
+cohort of LLM agents. Each stage works as file-based handoff:
+
+```bash
+hairloop init-run --disease "androgenetic alopecia" --rounds 3
+hairloop fetch-corpus <run_id>          # PubMed abstracts + ChEMBL drugs + supplements
+
+# per round (x3): prepare writes a prompt+context bundle; an LLM subagent
+# reads it and writes structured JSON; collect validates and ingests it
+hairloop prepare <run_id> generation    # propose drug/supplement hypotheses
+hairloop collect <run_id> generation
+hairloop prepare <run_id> reflection    # skeptical peer review of each hypothesis
+hairloop collect <run_id> reflection
+hairloop prepare <run_id> tournament    # pairwise judging, Elo ratings updated
+hairloop collect <run_id> tournament
+hairloop prepare <run_id> evolution     # merge/refine top hypotheses per critiques
+hairloop collect <run_id> evolution
+
+# finalize
+hairloop validate <run_id> --top 20     # ClinicalTrials.gov + OpenTargets + novelty
+hairloop prepare <run_id> metareview    # synthesize themes + final top picks
+hairloop collect <run_id> metareview
+hairloop report <run_id>                # report.md
+hairloop export <run_id>                # report.html
+```
+
+Every LLM-produced JSON output is schema-validated (pydantic) before it can
+affect run state; runs are resumable from `state.json` at any stage.
